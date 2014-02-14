@@ -1,4 +1,4 @@
-package com.iukonline.amule.aMuleTVShowScraper;
+package com.iukonline.amule;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import com.iukonline.amule.ec.v204.ECClientV204;
 import com.iukonline.amule.ec.v204.ECCodesV204;
 
 
-public class aMuleTVShowScraper {
+public class TVShowScraper {
     
     final static int WAIT_INTERVAL_SEC = 5;
     final static int SEARCH_TIMEOUT_SEC = 60;
