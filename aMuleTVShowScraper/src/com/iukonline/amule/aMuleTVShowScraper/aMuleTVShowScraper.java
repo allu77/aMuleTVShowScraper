@@ -1,4 +1,4 @@
-package TVShowSearch;
+package com.iukonline.amule.aMuleTVShowScraper;
 
 import java.io.File;
 import java.io.IOException;
