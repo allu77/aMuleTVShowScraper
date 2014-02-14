@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 
-import com.iukonline.amule.ec.ECConnState;
 import com.iukonline.amule.ec.ECSearchFile;
 import com.iukonline.amule.ec.ECSearchResults;
 import com.iukonline.amule.ec.ECUtils;
