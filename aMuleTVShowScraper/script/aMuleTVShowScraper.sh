@@ -37,7 +37,7 @@ START_AMULE=0
 amule_pw=""
 amule_pt=4712
 [ -x "$AMULE_PWD" ] || amule_pw="$AMULE_PWD"
-[ -x "$AMULE_PORT" ] || amule_pw="$AMULE_PORT"
+[ -x "$AMULE_PORT" ] || amule_pt="$AMULE_PORT"
 
 
 while [ $# -gt 0 ]; do
