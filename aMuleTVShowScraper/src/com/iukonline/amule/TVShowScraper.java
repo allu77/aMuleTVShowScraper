@@ -61,6 +61,7 @@ public class TVShowScraper {
         long minSize = 0L;
         long maxSize = -1L;
         PrintStream ed2kOut = System.out;
+        boolean reverse = false;
         
         
         
@@ -70,6 +71,8 @@ public class TVShowScraper {
                 lang = argv[++i];
             } else if (argv[i].equals("-r") && i + 1 < argv.length) {
                 res = argv[++i];
+            } else if (argv[i].equals("-R")) {
+            	reverse = true;
             } else if (argv[i].equals("-p") && i + 1 < argv.length) {
                 port = Integer.parseInt(argv[++i]);
             } else if (argv[i].equals("-m") && i + 1 < argv.length) {
@@ -111,7 +114,7 @@ public class TVShowScraper {
 
         doSearch(cl, good, title, season, episode, lang, res, minSize, maxSize);
         Collections.sort(good, new compareResult());
-        Collections.reverse(good);
+        if (reverse) Collections.reverse(good);
         
         for (ECSearchFile sf : good) {
             String fileName = sf.getFileName();
