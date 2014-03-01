@@ -21,32 +21,33 @@ show_usage() {
         echo "Valid OPTIONS" >&2
         echo "  -l LIMIT       Limits search to LIMIT episodes per show" >&2
         echo "  -i INPUT_FILE  File containing missing episodes CSV (default STDIN)" >&2
+        echo "  -j JAR_PATH    Path to aMuleTVShowScraper.jar file" >&2
         echo "  -s             Start aMule if not running">&2
         echo "  -p PASSWORD    aMule EC password">&2
         echo "  -P PORT        aMule EC port">&2
 }
 
 
+AMULE_PORT=4712
+AMULE_PWD=""
 
-[ -e /etc/autodl/autodl.conf ] && . /etc/autodl/autodl.conf
+JAR_PATH="."
+
+[ -e /etc/aMuleTVShowScraper ] && source /etc/aMuleTVShowScraper
+[ -e ~/.aMuleTVShowScraperrc ] && source ~/.aMuleTVShowScraperrc
 
 INPUT_FILE="-"
 PER_SHOW_LIMIT=""
 START_AMULE=0
 
-amule_pw=""
-amule_pt=4712
-[ -x "$AMULE_PWD" ] || amule_pw="$AMULE_PWD"
-[ -x "$AMULE_PORT" ] || amule_pt="$AMULE_PORT"
-
-
 while [ $# -gt 0 ]; do
         case "$1" in
                 -i) shift ; INPUT_FILE="$1" ;;
                 -l) shift ; PER_SHOW_LIMIT="$1" ;;
+                -j) shift ; JAR_PATH="$1" ;;
                 -s) START_AMULE=1 ;;
-                -p) shift; amule_pw="$1" ;;
-                -P) shift; amule_pt="$1" ;;
+                -p) shift; AMULE_PWD="$1" ;;
+                -P) shift; AMULE_PORT="$1" ;;
                 -*)
                     echo "Unknown option $1" >&2
                         show_usage
@@ -105,14 +106,14 @@ for episode in $(cat "$INPUT_FILE"); do
                 let show_counter=0
         fi
 
-        ADDITIONAL_OPT="-m 50000000 -M 2000000000 -p $amule_pt"
+        ADDITIONAL_OPT="-m 50000000 -M 2000000000 -p $AMULE_PORT"
         [ -z "$res" ] || [ "$res" == "any" ] || ADDITIONAL_OPT="$ADDITIONAL_OPT -r $res"
         [ -z "$lang" ] || [ -z "$nativeLang" ] || [ "$lang" == "$nativeLang" ] || ADDITIONAL_OPT="$ADDITIONAL_OPT -l $lang"
 
-        java com.iukonline.amule.TVShowScraper $ADDITIONAL_OPT -o "$TMPFILE" localhost "$amule_pw" "$title" $season $ep
+        java -cp "$JAR_PATH/aMuleTVShowScraper.jar" com.iukonline.amule.TVShowScraper $ADDITIONAL_OPT -o "$TMPFILE" localhost "$AMULE_PWD" "$title" $season $ep
         links=$(get_new_links)
         if [ $links -eq 0 ] && ! [ -z "$alternateTitle" ]; then
-                java com.iukonline.amule.TVShowScraper $ADDITIONAL_OPT -o "$TMPFILE" localhost "$amule_pw" "$alternateTitle" $season $ep
+                java -cp "$JAR_PATH/aMuleTVShowScraper.jar" com.iukonline.amule.TVShowScraper $ADDITIONAL_OPT -o "$TMPFILE" localhost "$AMULE_PWD" "$alternateTitle" $season $ep
                 get_new_links > /dev/null
         fi
         last_show="$title"
