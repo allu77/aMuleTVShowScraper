@@ -59,6 +59,11 @@
         <copy todir="${dist.dir}">
             <fileset dir="${script.dir}"/>
         </copy>
+		<chmod perm="a+x">
+			<fileset dir="${dist.dir}">
+				<include name="**/*.sh"/>
+			</fileset>
+		</chmod>
     </target>
         
 
