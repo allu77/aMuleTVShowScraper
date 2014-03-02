@@ -110,10 +110,10 @@ for episode in $(cat "$INPUT_FILE"); do
         [ -z "$res" ] || [ "$res" == "any" ] || ADDITIONAL_OPT="$ADDITIONAL_OPT -r $res"
         [ -z "$lang" ] || [ -z "$nativeLang" ] || [ "$lang" == "$nativeLang" ] || ADDITIONAL_OPT="$ADDITIONAL_OPT -l $lang"
 
-        java -cp "$JAR_PATH/aMuleTVShowScraper.jar" com.iukonline.amule.TVShowScraper $ADDITIONAL_OPT -o "$TMPFILE" localhost "$AMULE_PWD" "$title" $season $ep
+        java -jar "$JAR_PATH/aMuleTVShowScraper.jar" $ADDITIONAL_OPT -o "$TMPFILE" localhost "$AMULE_PWD" "$title" $season $ep
         links=$(get_new_links)
         if [ $links -eq 0 ] && ! [ -z "$alternateTitle" ]; then
-                java -cp "$JAR_PATH/aMuleTVShowScraper.jar" com.iukonline.amule.TVShowScraper $ADDITIONAL_OPT -o "$TMPFILE" localhost "$AMULE_PWD" "$alternateTitle" $season $ep
+                java -jar "$JAR_PATH/aMuleTVShowScraper.jar" $ADDITIONAL_OPT -o "$TMPFILE" localhost "$AMULE_PWD" "$alternateTitle" $season $ep
                 get_new_links > /dev/null
         fi
         last_show="$title"
