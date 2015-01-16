@@ -89,8 +89,8 @@ oldIFS=$IFS
 IFS=$'\n'
 for episode in $(cat "$INPUT_FILE"); do
         IFS=$oldIFS
-        title=$(echo "$episode" | cut -d , -f 1| sed 's/"//g')
-        alternateTitle=$(echo "$episode" | cut -d , -f 2 | sed 's/"//g')
+        title=$(echo "$episode" | cut -d , -f 1| sed 's/"//g' | sed 's/[()]//g')
+        alternateTitle=$(echo "$episode" | cut -d , -f 2 | sed 's/"//g' | sed 's/[()]//g')
         lang=$(echo "$episode" | cut -d , -f 3)
         nativeLang=$(echo "$episode" | cut -d , -f 4)
         res=$(echo "$episode" | cut -d , -f 5)
