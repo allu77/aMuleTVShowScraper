@@ -52,7 +52,7 @@ public class TVShowScraper {
     final static byte[] SEARCH_TYPE = { ECCodesV204.EC_SEARCH_GLOBAL, ECCodesV204.EC_SEARCH_KAD };
     static HashMap<String, String[]> langMap = new HashMap<String, String[]>();
     final static String[] LANG_MAP_ITA = { 
-        "(?<!\\bsub(bed)?\\b)" + WORD_SEPARATORS_REGEX + "\\bita\\b",  
+        "(?<!\\b(hard)?sub(bed)?\\b)" + WORD_SEPARATORS_REGEX + "\\bita\\b",  
         "(?<!\\bsub\\b)" + WORD_SEPARATORS_REGEX + "\\bitalian\\b" + WORD_SEPARATORS_REGEX + "(?!\\bsubbed\\b)",
         "(?<!\\bsottotitoli\\b(" + WORD_SEPARATORS_REGEX  +"\\bin\\b)?)" + WORD_SEPARATORS_REGEX + "\\bitaliano\\b"
     }; 
