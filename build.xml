@@ -42,6 +42,7 @@
         <jar destfile="${jar.file}" basedir="${class.dir}">
             
             <zipfileset src="${lib.dir}/JavaAmuleEC-0.5.jar" />
+            <zipfileset src="${lib.dir}/json-simple-1.1.1.jar" />
                 
             
             <manifest>

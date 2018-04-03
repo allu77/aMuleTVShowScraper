@@ -29,6 +29,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.regex.Matcher;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 
 import com.iukonline.amule.ec.ECSearchFile;
 import com.iukonline.amule.ec.ECSearchResults;
@@ -42,6 +47,8 @@ import com.iukonline.amule.ec.v204.ECCodesV204;
 
 public class TVShowScraper {
     
+	private static enum OutputFormat { TXT, JSON }
+
     final static int WAIT_INTERVAL_SEC = 5;
     final static int SEARCH_TIMEOUT_SEC = 60;
     final static int ED2K_CONNECT_TIMEOUT_SEC = 120;
@@ -56,6 +63,8 @@ public class TVShowScraper {
         "(?<!\\bsub\\b)" + WORD_SEPARATORS_REGEX + "\\bitalian\\b" + WORD_SEPARATORS_REGEX + "(?!\\bsubbed\\b)",
         "(?<!\\bsottotitoli\\b(" + WORD_SEPARATORS_REGEX  +"\\bin\\b)?)" + WORD_SEPARATORS_REGEX + "\\bitaliano\\b"
     }; 
+
+	final static String PUBDATE_FORMAT = "EEE, dd MMM YYYY HH:mm:ss, ZZZZ";
     
 
     /**
@@ -70,6 +79,7 @@ public class TVShowScraper {
      */
     public static void main(String[] argv) throws NoSuchAlgorithmException, UnknownHostException, IOException, ECClientException, ECPacketParsingException, ECServerException, InterruptedException {
 
+
         langMap.put("ita", LANG_MAP_ITA);
         
         String lang = null;
@@ -79,6 +89,8 @@ public class TVShowScraper {
         long maxSize = -1L;
         PrintStream ed2kOut = System.out;
         boolean reverse = false;
+		OutputFormat outFormat = OutputFormat.TXT;
+		JSONArray outJSON = new JSONArray();
         
         
         
@@ -96,6 +108,16 @@ public class TVShowScraper {
                 minSize = Long.parseLong(argv[++i]);
             } else if (argv[i].equals("-M") && i + 1 < argv.length) {
                 maxSize = Long.parseLong(argv[++i]);
+            } else if (argv[i].equals("-f") && i + 1 < argv.length) {
+				i++;
+                if (argv[i].equals("txt")) {
+					outFormat = OutputFormat.TXT;
+				} else if (argv[i].equals("json")) {
+					outFormat = OutputFormat.JSON;
+				} else {
+					System.err.println("Invalid output format " + argv[i]);
+					return;
+				}
             } else if (argv[i].equals("-o") && i + 1 < argv.length) {
                 String fileOut = argv[++i];
                 if (!fileOut.equals("-")) {
@@ -132,6 +154,8 @@ public class TVShowScraper {
         doSearch(cl, good, title, season, episode, lang, res, minSize, maxSize);
         Collections.sort(good, new compareResult());
         if (reverse) Collections.reverse(good);
+
+		String pubDate = (new SimpleDateFormat(PUBDATE_FORMAT)).format(new Date());
         
         for (ECSearchFile sf : good) {
             String fileName = sf.getFileName();
@@ -141,8 +165,24 @@ public class TVShowScraper {
             sb.append(Long.toString(size) + "|");
             sb.append(ECUtils.byteArrayToHexString(hash, hash.length, 0, ""));
             sb.append("|/");
-            ed2kOut.println(sb.toString());
+			switch (outFormat) {
+				case TXT:
+					ed2kOut.println(sb.toString());
+					break;
+				case JSON:
+					JSONObject obj = new JSONObject();
+					obj.put("title", sf.getFileName());
+					obj.put("url", sb.toString());
+					obj.put("sourceCount", sf.getSourceCount());
+					obj.put("pubDate", pubDate);
+					outJSON.add(obj);
+					break;
+			}
         }
+
+		if (outFormat == OutputFormat.JSON) {
+			ed2kOut.print(outJSON);
+		}
     }
     
     private static void doSearch(ECClientV204 cl, ArrayList <ECSearchFile> files, String title, int season, int episode, String lang, String res, long minSize, long maxSize) throws ECClientException, IOException, ECPacketParsingException, ECServerException, InterruptedException {
